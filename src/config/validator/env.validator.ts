@@ -2,6 +2,13 @@ import { plainToInstance } from 'class-transformer';
 import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
 import { Environment } from './env.enum';
 
+/*
+ * Funcion para validar las variables de entorno, con la dependencia
+ * class validator creo un pequeño dto para validar todas las vairables
+ * y creo la funcion para primero transformar todos los datos de las variables
+ * a su tipo de typescript, y luego validar las etiquetas
+ */
+
 class EnvironmentVariables {
     @IsEnum(Environment)
     NODE_ENV: string;
