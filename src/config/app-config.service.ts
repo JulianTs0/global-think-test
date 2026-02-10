@@ -5,9 +5,13 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AppConfigService {
-    constructor(private readonly configService: ConfigService) {}
+    constructor(private readonly configService: ConfigService) { }
 
     get appPort(): string {
         return this.configService.getOrThrow<string>('PORT');
+    }
+
+    get dataBaseUri(): string {
+        return this.configService.getOrThrow<string>('MONGO_URI');
     }
 }
