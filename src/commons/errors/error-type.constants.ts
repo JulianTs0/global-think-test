@@ -1,3 +1,8 @@
+/*
+ * Catalogo de errores que se usan en las excepciones
+ * personalizadas donde se manejan los errores de negocio
+ */
+
 export const Errors = {
     INTERNAL_ERROR: {
         key: 'INTERNAL_ERROR',
@@ -15,5 +20,7 @@ export const Errors = {
         message: 'Invalid fields',
     },
 } as const;
+
+// Definicion del tipo para que el copilador ayude a seleccionarlos en el desarollo
 
 export type ErrorType = (typeof Errors)[keyof typeof Errors];

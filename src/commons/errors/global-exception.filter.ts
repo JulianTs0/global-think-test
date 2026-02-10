@@ -9,6 +9,13 @@ import { Errors } from './error-type.constants';
 import { ErrorResponse } from './error-response.dto';
 import { ServiceException } from './service.exception';
 
+/*
+ * Este handler lo que hace es capturar cualquier excepcions
+ * no manejada, lo cual me permite tirar excepciones sin preocuparme
+ * del try catch ya que esto lo maneja, y centralizo el manejo aca,
+ * ademas filtro mis excepciones de las ajenas
+ */
+
 @Catch()
 export class GlobalExceptionHandler implements ExceptionFilter {
     catch(exception: unknown, host: ArgumentsHost) {

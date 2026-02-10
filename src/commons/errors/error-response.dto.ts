@@ -1,5 +1,7 @@
 import { ErrorType } from './error-type.constants';
 
+// Dto de la respuesta que se va a mostrar por la api cuando ocurra un error
+
 export class ErrorResponse {
     constructor(
         public readonly status: number,

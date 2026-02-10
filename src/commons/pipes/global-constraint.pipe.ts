@@ -3,6 +3,12 @@ import { ValidationError } from 'class-validator';
 import { Errors } from '../errors/error-type.constants';
 import { ServiceException } from '../errors/service.exception';
 
+/*
+ * Esta handler maneja todas las constraint que fallan a la hora
+ * de verificar los dtos de entrada, y tranforma esas excepciones
+ * personalizadas de la dependencia a mis propias excepciones de negocio
+ */
+
 export class GlobalConstraintHandler extends ValidationPipe {
     constructor() {
         super({
