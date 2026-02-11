@@ -19,4 +19,4 @@ import { validateEnvFile } from './validator/env.validator';
     providers: [AppConfigService],
     exports: [AppConfigService],
 })
-export class AppConfigModule { }
+export class AppConfigModule {}
