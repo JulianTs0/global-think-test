@@ -16,4 +16,4 @@ import { AppConfigService } from 'src/config/app-config.service';
     ],
     exports: [MongooseModule],
 })
-export class DatabaseModule { }
+export class DatabaseModule {}
