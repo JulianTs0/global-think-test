@@ -1,7 +1,7 @@
 // Expresiones regulares que se usan en la validacion de dtos
 
 export class RegexValidators {
-    public static readonly NAME: RegExp = /./;
-    public static readonly PASSWORD: RegExp = /./;
-    public static readonly PHONE: RegExp = /./;
+    public static readonly NAME = /^[\p{L}]{2,20}(?:[ '-][\p{L}]{2,20})*$/u;
+    public static readonly PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,}$/;
+    public static readonly PHONE = /^[+]?[0-9\s\-\(\)]{7,20}$/;
 }
