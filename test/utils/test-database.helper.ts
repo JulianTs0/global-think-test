@@ -10,7 +10,7 @@ import { Connection } from 'mongoose';
 
 @Injectable()
 export class TestDatabaseHelper {
-    constructor(@InjectConnection() private readonly connection: Connection) { }
+    constructor(@InjectConnection() private readonly connection: Connection) {}
 
     async cleanDatabase() {
         const collections = Object.values(this.connection.collections);
