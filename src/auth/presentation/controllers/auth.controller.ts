@@ -16,14 +16,19 @@ import {
     RegisterReq,
     RegisterRes,
 } from 'src/auth/domain';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 
 // Controller del modulo de autenticacion
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthServiceI) {}
+    constructor(private readonly authService: AuthServiceI) { }
 
     @Post('/login')
     @ApiOperation({
@@ -37,6 +42,7 @@ export class AuthController {
     }
 
     @Get()
+    @ApiBearerAuth()
     @ApiOperation({
         summary: 'Verificar autenticación',
         description: 'Valida el token de autorización.',
