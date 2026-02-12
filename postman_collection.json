@@ -77,6 +77,133 @@
                     "response": []
                 }
             ]
+        },
+        {
+            "name": "Users",
+            "item": [
+                {
+                    "name": "Get User By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "authorization",
+                                "value": "Bearer <YOUR_TOKEN_HERE>",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/users/:id",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "123e4567-e89b-12d3-a456-426614174000"
+                                }
+                            ]
+                        },
+                        "description": "Retorna la información detallada de un usuario específico."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "authorization",
+                                "value": "Bearer <YOUR_TOKEN_HERE>",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/users?size=10&page=1",
+                            "host": ["{{base_url}}"],
+                            "path": ["users"],
+                            "query": [
+                                {
+                                    "key": "size",
+                                    "value": "10"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "fullName",
+                                    "value": "Juan Pérez",
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "Busca usuarios con paginación y filtro opcional por nombre."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Edit User",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "authorization",
+                                "value": "Bearer <YOUR_TOKEN_HERE>",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"fullName\": \"Juan Pérez\",\n    \"shortDescription\": \"Desarrollador Fullstack\",\n    \"email\": \"juan.perez@ejemplo.com\",\n    \"phoneNumber\": \"+541122334455\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/users/:id",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "123e4567-e89b-12d3-a456-426614174000"
+                                }
+                            ]
+                        },
+                        "description": "Actualiza la información de un usuario."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete User",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "authorization",
+                                "value": "Bearer <YOUR_TOKEN_HERE>",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/users/:id",
+                            "host": ["{{base_url}}"],
+                            "path": ["users", ":id"],
+                            "variable": [
+                                {
+                                    "key": "id",
+                                    "value": "123e4567-e89b-12d3-a456-426614174000"
+                                }
+                            ]
+                        },
+                        "description": "Elimina a un usuario del sistema."
+                    },
+                    "response": []
+                }
+            ]
         }
     ],
     "variable": [
