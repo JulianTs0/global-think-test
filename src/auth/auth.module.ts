@@ -1,21 +1,27 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AppConfigModule } from 'src/config/app-config.module';
-import { AuthController } from './presentation';
+import { AuthController } from 'src/auth/presentation';
 import {
+    AuthGuard,
     AuthHelper,
     BcryptEncoder,
     JWTHandler,
     PasswordEncoderI,
     TokenHandlerI,
-} from './config';
-import { AuthService, AuthServiceI } from './domain';
+} from 'src/auth/config';
+import { AuthService, AuthServiceI } from 'src/auth/domain';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
-    imports: [AppConfigModule, JwtModule.register({}), UsersModule],
+    imports: [
+        AppConfigModule,
+        JwtModule.register({}),
+        forwardRef(() => UsersModule),
+    ],
     controllers: [AuthController],
     providers: [
+        AuthGuard,
         AuthHelper,
         {
             provide: PasswordEncoderI,
@@ -32,6 +38,6 @@ import { UsersModule } from 'src/users/users.module';
             useExisting: AuthService,
         },
     ],
-    exports: [AuthService, AuthServiceI],
+    exports: [AuthService, AuthServiceI, AuthGuard],
 })
-export class AuthModule { }
+export class AuthModule {}
