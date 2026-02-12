@@ -1,3 +1,5 @@
+// Dto que representa la paginacion que se devuelve al frontend
+
 export class PageContent<T> {
     public readonly content: T[];
 

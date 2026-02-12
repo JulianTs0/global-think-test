@@ -1,3 +1,5 @@
+// Dto que representa todos los datos que me interesean que la bdd devuelva
+
 export class Page<T> {
     public readonly content: T[];
 
