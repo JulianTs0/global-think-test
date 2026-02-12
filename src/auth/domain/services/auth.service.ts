@@ -28,7 +28,7 @@ export class AuthService implements AuthServiceI {
     constructor(
         private readonly authHelper: AuthHelper,
         private readonly userSevice: UserServiceI,
-    ) { }
+    ) {}
 
     public async auth(request: AuthReq): Promise<AuthRes> {
         const user: User = await this.validateToken(request.authorization);
@@ -83,12 +83,10 @@ export class AuthService implements AuthServiceI {
 
     public async validateToken(rawToken: string): Promise<User> {
         const token: string | null = await this.authHelper.parseToken(rawToken);
-
         if (token == null) throw new ServiceException(Errors.UNAUTHORIZED);
 
         const id: string = await this.authHelper.getSubject(token);
         const user: User | null = await this.userSevice.findById(id);
-
         if (user == null) throw new ServiceException(Errors.USER_NOT_FOUND);
 
         return user;

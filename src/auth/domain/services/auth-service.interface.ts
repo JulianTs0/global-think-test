@@ -1,12 +1,10 @@
 import { User } from 'src/commons';
-import {
-    AuthReq,
-    AuthRes,
-    LoginRes,
-    LoginReq,
-    RegisterReq,
-    RegisterRes,
-} from '..';
+import { AuthReq } from '../dto/auth/request/auth.request.dto';
+import { AuthRes } from '../dto/auth/response/auth.response.dto';
+import { LoginRes } from '../dto/auth/response/login.response.dto';
+import { LoginReq } from '../dto/auth/request/login.request.dto';
+import { RegisterReq } from '../dto/auth/request/register.request.dto';
+import { RegisterRes } from '../dto/auth/response/register.response.dto';
 
 /*
  * Interfaz del servicio de aunteticacion, este contrato permite logearse
