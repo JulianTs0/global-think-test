@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { UserModel } from '../schemas/user.model';
+import { Page } from 'src/commons';
+import { Model } from 'mongoose';
 
 /*
  * Este es un DAO de mongo el cual solo habla en idioma de la bdd
@@ -27,5 +28,47 @@ export class MongoUserDao {
         const createdUser = new this.mongoRepository(userModel);
 
         return await createdUser.save();
+    }
+
+    public async findAll(
+        size: number,
+        page: number,
+        name?: string,
+    ): Promise<Page<UserModel>> {
+        const skip: number = (page - 1) * size;
+
+        const sortConfig: any = name ? { fullName: 1 } : { createdAt: -1 };
+        const filter: Record<string, any> = {};
+
+        if (name) {
+            filter.fullName = { $regex: name, $options: 'i' };
+        }
+
+        const [models, total] = await Promise.all([
+            this.mongoRepository
+                .find(filter)
+                .sort(sortConfig)
+                .skip(skip)
+                .limit(size)
+                .exec(),
+            this.mongoRepository.countDocuments(filter).exec(),
+        ]);
+
+        const modelsPage: Page<UserModel> = new Page(models, total, page, size);
+
+        return modelsPage;
+    }
+
+    public async update(
+        id: string,
+        userModel: UserModel,
+    ): Promise<UserModel | null> {
+        return await this.mongoRepository
+            .findByIdAndUpdate(id, userModel, { new: true })
+            .exec();
+    }
+
+    public async delete(model: UserModel): Promise<void> {
+        await this.mongoRepository.findByIdAndDelete(model._id).exec();
     }
 }

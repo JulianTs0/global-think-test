@@ -3,8 +3,14 @@ import { GetByIdRes } from '../../response/get-by-id.response.dto';
 
 export class GetByIdMapper {
     public toResponse(user: User): GetByIdRes {
-        const response = new GetByIdRes({});
-
-        return response;
+        return new GetByIdRes({
+            id: user.id,
+            fullName: user.fullName,
+            shortDescription: user.shortDescription,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        });
     }
 }

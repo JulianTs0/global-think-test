@@ -8,7 +8,7 @@ export class UserEntityMapper {
         if (userModel == null) return null;
 
         const entity: User = new User();
-        entity.id = userModel._id;
+        entity.id = userModel._id.toString();
         entity.fullName = userModel.fullName;
         entity.shortDescription = userModel.shortDescription;
         entity.email = userModel.email;

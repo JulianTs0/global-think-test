@@ -12,7 +12,7 @@ import { User } from 'src/commons';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private authService: AuthServiceI) {}
+    constructor(private authService: AuthServiceI) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request: Request = context.switchToHttp().getRequest();
