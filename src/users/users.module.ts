@@ -1,16 +1,19 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppConfigModule } from 'src/config/app-config.module';
-import { UserService, UserServiceI, UserRepositoryI } from './domain';
+import { UserService, UserServiceI, UserRepositoryI } from 'src/users/domain';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
     UserModel,
     UserSchema,
     MongoUserDao,
     UserRepository,
-} from './persistance';
+} from 'src/users/persistance';
+import { UserController } from 'src/users/presentation';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
     imports: [
+        forwardRef(() => AuthModule),
         AppConfigModule,
         MongooseModule.forFeature([
             {
@@ -19,7 +22,7 @@ import {
             },
         ]),
     ],
-    controllers: [],
+    controllers: [UserController],
     providers: [
         MongoUserDao,
         {
@@ -34,4 +37,4 @@ import {
     ],
     exports: [UserService, UserServiceI],
 })
-export class UsersModule { }
+export class UsersModule {}
