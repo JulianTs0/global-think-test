@@ -9,4 +9,8 @@ export class AuthReq {
     @IsNotEmpty()
     @IsString()
     readonly authorization: string;
+
+    constructor(init?: Partial<AuthReq>) {
+        Object.assign(this, init);
+    }
 }

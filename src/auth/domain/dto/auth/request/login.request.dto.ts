@@ -20,4 +20,8 @@ export class LoginReq {
     @IsString()
     @Matches(RegexValidators.PASSWORD)
     readonly password: string;
+
+    constructor(init?: Partial<LoginReq>) {
+        Object.assign(this, init);
+    }
 }

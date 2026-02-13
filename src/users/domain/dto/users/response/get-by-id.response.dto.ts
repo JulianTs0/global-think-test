@@ -1,17 +1,17 @@
 export class GetByIdRes {
-    public id: string;
+    public readonly id: string;
 
-    public fullName: string;
+    public readonly fullName: string;
 
-    public shortDescription: string | null;
+    public readonly shortDescription: string | null;
 
-    public email: string;
+    public readonly email: string;
 
-    public phoneNumber: string | null;
+    public readonly phoneNumber: string | null;
 
-    public createdAt: Date;
+    public readonly createdAt: Date;
 
-    public updatedAt: Date;
+    public readonly updatedAt: Date;
 
     constructor(init?: Partial<GetByIdRes>) {
         Object.assign(this, init);

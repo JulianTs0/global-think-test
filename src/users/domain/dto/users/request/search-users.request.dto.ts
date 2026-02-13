@@ -7,6 +7,7 @@ import {
     IsString,
     IsPositive,
 } from 'class-validator';
+import { User } from 'src/commons';
 
 export class SearchUsersReq {
     @ApiProperty({
@@ -17,7 +18,7 @@ export class SearchUsersReq {
     @Type(() => Number)
     @IsInt()
     @IsPositive()
-    public size: number;
+    public readonly size: number;
 
     @ApiProperty({
         description: 'Número de página',
@@ -27,7 +28,7 @@ export class SearchUsersReq {
     @Type(() => Number)
     @IsInt()
     @IsPositive()
-    public page: number;
+    public readonly page: number;
 
     @ApiPropertyOptional({
         description: 'Nombre completo del usuario para filtrar',
@@ -36,7 +37,9 @@ export class SearchUsersReq {
     @IsOptional()
     @IsNotEmpty()
     @IsString()
-    public fullName: string;
+    public readonly fullName: string;
+
+    public readonly authUser: User;
 
     constructor(init?: Partial<SearchUsersReq>) {
         Object.assign(this, init);

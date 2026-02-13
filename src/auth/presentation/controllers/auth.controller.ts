@@ -31,6 +31,7 @@ export class AuthController {
     constructor(private readonly authService: AuthServiceI) { }
 
     @Post('/login')
+    @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: 'Iniciar sesión',
         description: 'Autentica a un usuario con sus credenciales.',

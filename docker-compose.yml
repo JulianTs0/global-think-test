@@ -1,0 +1,31 @@
+services:
+    api:
+        build:
+            context: .
+            target: production
+        container_name: global_think_api
+        restart: always
+        ports:
+            - '3000:3000'
+        env_file:
+            - .env
+        environment:
+            - MONGO_URI=mongodb://develop:develop@global_think_db:27017/global-think-db_prod?authSource=admin
+            - NODE_ENV=prod
+        depends_on:
+            - global_think_db
+
+    global_think_db:
+        image: mongo:6.0
+        container_name: global_think_db
+        restart: always
+        ports:
+            - '27017:27017'
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=develop
+            - MONGO_INITDB_ROOT_PASSWORD=develop
+        volumes:
+            - global_think_data:/data/db
+
+volumes:
+    global_think_data:

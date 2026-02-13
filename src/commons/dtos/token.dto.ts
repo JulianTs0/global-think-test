@@ -7,7 +7,7 @@ export class Token {
         description: 'Token de acceso JWT',
         example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     })
-    public accessToken: string;
+    public readonly accessToken: string;
 
     constructor(init?: Partial<Token>) {
         Object.assign(this, init);

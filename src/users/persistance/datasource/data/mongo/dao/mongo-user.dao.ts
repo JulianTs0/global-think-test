@@ -14,7 +14,7 @@ export class MongoUserDao {
     constructor(
         @InjectModel(UserModel.name)
         private readonly mongoRepository: Model<UserModel>,
-    ) { }
+    ) {}
 
     public async findById(id: string): Promise<UserModel | null> {
         return await this.mongoRepository.findById(id).exec();
@@ -64,7 +64,7 @@ export class MongoUserDao {
         userModel: UserModel,
     ): Promise<UserModel | null> {
         return await this.mongoRepository
-            .findByIdAndUpdate(id, userModel, { new: true })
+            .findByIdAndUpdate(id, userModel, { returnDocument: 'after' })
             .exec();
     }
 
