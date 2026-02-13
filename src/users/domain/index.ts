@@ -14,3 +14,4 @@ export * from './dto/users/response/search-users.response.dto';
 export * from './repository/user-repository.interface';
 export * from './services/user-service.interface';
 export * from './services/user.service';
+export * from './repository/profile-repository.interface';
