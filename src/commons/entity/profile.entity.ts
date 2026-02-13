@@ -1,4 +1,5 @@
 // Entidad de dominio del perfil
+
 export class Profile {
     public id: string;
 

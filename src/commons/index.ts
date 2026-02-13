@@ -3,6 +3,7 @@ export * from './dtos/page-content.dto';
 export * from './dtos/page.dto';
 export * from './dtos/token.dto';
 export * from './entity/user.entity';
+export * from './entity/profile.entity';
 export * from './errors/error-response.dto';
 export * from './errors/error-type.constants';
 export * from './errors/global-exception.filter';
