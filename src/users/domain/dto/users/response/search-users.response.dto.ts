@@ -1,9 +1,9 @@
 import { GetByIdRes } from './get-by-id.response.dto';
 
 export class SearchUsersRes {
-    public users: GetByIdRes[];
+    public readonly users: GetByIdRes[];
 
-    public nextPage: number | null;
+    public readonly nextPage: number | null;
 
     constructor(init?: Partial<SearchUsersRes>) {
         Object.assign(this, init);

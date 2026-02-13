@@ -14,7 +14,7 @@ export class AuthHelper {
         private readonly passwordEncoder: PasswordEncoderI,
 
         private readonly tokenHandler: TokenHandlerI,
-    ) { }
+    ) {}
 
     public async hashPassword(password: string): Promise<string> {
         return this.passwordEncoder.hash(password);
@@ -46,9 +46,8 @@ export class AuthHelper {
     }
 
     public async createToken(user: User): Promise<Token> {
-        const token: Token = new Token();
-        token.accessToken = await this.tokenHandler.createToken(user);
-        return token;
+        const accessToken = await this.tokenHandler.createToken(user);
+        return new Token({ accessToken });
     }
 
     public async getSubject(token: string): Promise<string> {

@@ -16,7 +16,7 @@ export class EditBody {
     @IsNotEmpty()
     @IsString()
     @Matches(RegexValidators.NAME)
-    public fullName: string;
+    public readonly fullName: string;
 
     @ApiProperty({
         description: 'Descripción corta del usuario',
@@ -25,7 +25,7 @@ export class EditBody {
     })
     @IsNotEmpty()
     @IsString()
-    public shortDescription: string | null;
+    public readonly shortDescription: string | null;
 
     @ApiProperty({
         description: 'Correo electrónico del usuario',
@@ -34,7 +34,7 @@ export class EditBody {
     @IsNotEmpty()
     @IsString()
     @IsEmail()
-    public email: string;
+    public readonly email: string;
 
     @ApiPropertyOptional({
         description: 'Número de teléfono del usuario',
@@ -44,7 +44,7 @@ export class EditBody {
     @IsOptional()
     @IsNotEmpty()
     @IsString()
-    public phoneNumber: string | null;
+    public readonly phoneNumber: string | null;
 
     constructor(init?: Partial<EditBody>) {
         Object.assign(this, init);

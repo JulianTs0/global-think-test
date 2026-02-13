@@ -9,9 +9,9 @@ export class GetByIdReq {
     })
     @IsNotEmpty()
     @IsString()
-    public id: string;
+    public readonly id: string;
 
-    public authUser: User;
+    public readonly authUser: User;
 
     constructor(init?: Partial<GetByIdReq>) {
         Object.assign(this, init);
