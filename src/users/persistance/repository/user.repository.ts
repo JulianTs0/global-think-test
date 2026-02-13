@@ -13,11 +13,16 @@ import { UserModel } from '../datasource/data/mongo/schemas/user.model';
 
 @Injectable()
 export class UserRepository implements UserRepositoryI {
-    constructor(private readonly dao: MongoUserDao) {}
+    constructor(private readonly dao: MongoUserDao) { }
 
     public async findById(id: string): Promise<User | null> {
         const model: UserModel | null = await this.dao.findById(id);
         return UserEntityMapper.toDomain(model);
+    }
+
+    public async findByIds(ids: string[]): Promise<User[]> {
+        const models: UserModel[] = await this.dao.findByIds(ids);
+        return UserEntityMapper.toDomainList(models);
     }
 
     public async findByEmail(email: string): Promise<User | null> {
@@ -29,24 +34,6 @@ export class UserRepository implements UserRepositoryI {
         const userModel: UserModel = UserEntityMapper.toModel(user)!;
         const saved = await this.dao.save(userModel);
         return UserEntityMapper.toDomain(saved)!;
-    }
-
-    public async findAll(
-        size: number,
-        page: number,
-        name?: string,
-    ): Promise<PageContent<User>> {
-        const models: Page<UserModel> = await this.dao.findAll(
-            size,
-            page,
-            name,
-        );
-
-        return new PageContent<User>({
-            content: UserEntityMapper.toDomainList(models.content),
-            page: models.page,
-            nextPage: models.hasNext ? models.page + 1 : null,
-        });
     }
 
     public async update(id: string, user: User): Promise<User> {

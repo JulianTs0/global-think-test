@@ -46,6 +46,16 @@ export class EditBody {
     @IsString()
     public readonly phoneNumber: string | null;
 
+    @ApiPropertyOptional({
+        description: 'Dirección del usuario',
+        example: 'Calle Falsa 123',
+        nullable: true,
+    })
+    @IsOptional()
+    @IsNotEmpty()
+    @IsString()
+    public readonly address: string | null;
+
     constructor(init?: Partial<EditBody>) {
         Object.assign(this, init);
     }

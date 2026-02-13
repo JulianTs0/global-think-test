@@ -54,6 +54,7 @@ describe('UserModule (e2e)', () => {
         email: 'user1@test.com',
         password: 'Password123!',
         phoneNumber: '+5491100000001',
+        address: 'Street 1',
     };
 
     const user2 = {
@@ -62,6 +63,7 @@ describe('UserModule (e2e)', () => {
         email: 'user2@test.com',
         password: 'Password123!',
         phoneNumber: '+5491100000002',
+        address: 'Street 2',
     };
 
     // Funcion helper
@@ -99,6 +101,7 @@ describe('UserModule (e2e)', () => {
                     expect(res.body.phoneNumber).toBe(user1.phoneNumber);
                     expect(res.body.fullName).toBe(user1.fullName);
                     expect(res.body.email).toBe(user1.email);
+                    expect(res.body.address).toBe(user1.address);
                 });
         });
 
@@ -151,6 +154,7 @@ describe('UserModule (e2e)', () => {
                 shortDescription: 'Updated Bio',
                 email: 'user1.updated@test.com',
                 phoneNumber: '+5491199999999',
+                address: 'New Street',
             };
 
             return request(app.getHttpServer())
@@ -164,6 +168,7 @@ describe('UserModule (e2e)', () => {
                         updateData.shortDescription,
                     );
                     expect(res.body.email).toBe(updateData.email);
+                    expect(res.body.address).toBe(updateData.address);
                 });
         });
 
@@ -176,6 +181,7 @@ describe('UserModule (e2e)', () => {
                 shortDescription: 'I am a hacker',
                 email: 'hacker@test.com',
                 phoneNumber: '+5491111111111',
+                address: 'Hacker Street',
             };
 
             return request(app.getHttpServer())
@@ -195,6 +201,7 @@ describe('UserModule (e2e)', () => {
                 shortDescription: 'Bio',
                 email: 'not-an-email',
                 phoneNumber: '+5491100000000',
+                address: 'Street',
             };
 
             return request(app.getHttpServer())

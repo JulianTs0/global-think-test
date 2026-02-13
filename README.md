@@ -1,98 +1,156 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Global Think Test - Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este proyecto es una API REST construida con **NestJS**, siguiendo los conocimientos mis arquitectura separando el dominio de la infraestructura y la persistencia.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🏗 Estructura del Proyecto
 
-## Description
+El proyecto sigue una estructura modular simplificada
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
+```
+src/
+├── auth/               # Módulo de Autenticación (Login, Registro, Guards)
+├── commons/            # Capa de Dominio Compartido (Entidades, Errores, Utils)
+│   ├── entity/         # Entidades de Negocio (User, Profile) - Agnósticas a la BDD
+│   └── errors/         # Manejo estandarizado de errores
+├── config/             # Configuración de la aplicación (Variables de entorno)
+├── database/           # Configuración de conexión a MongoDB
+├── users/              # Módulo de Usuarios
+│   ├── domain/         # Capa de Negocio
+│   │   ├── dto/        # Data Transfer Objects
+│   │   ├── repository/ # Interfaces del Repositorio (Inversión de Dependencias)
+│   │   └── services/   # Lógica de Negocio
+│   ├── persistance/    # Capa de Infraestructura (Implementación de Repositorios)
+│   │   ├── datasource/ # Modelos de Mongoose (User, Profile) y DAOs
+│   │   └── repository/ # Implementación de la interfaz del dominio usando DAOs
+│   └── presentation/   # Capa de Presentación (Controllers)
 ```
 
-## Compile and run the project
+### Conceptos Clave
 
-```bash
-# development
-$ npm run start
+- **Dualidad Entidad/Modelo**: Existen Entidades de Dominio (`User`, `Profile` en `src/commons`) que son objetos puros de TypeScript, y Modelos de Persistencia (`UserModel`, `ProfileModel` en `src/users/persistance`) que son esquemas de Mongoose. Los `Mappers` se encargan de transformar entre unos y otros.
+- **Separación Usuario/Perfil**: El `User` contiene solo datos de autenticación (email, passwordHash), mientras que el `Profile` contiene datos personales (nombre, teléfono, dirección).
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
+## ⚙️ Configuración de Variables de Entorno
+
+El proyecto requiere la configuración de archivos `.env` para su correcto funcionamiento en diferentes entornos.
+
+### 1. Archivo `.env` (Desarrollo)
+
+Este archivo se utiliza para el entorno de desarrollo local (`start:dev`).
+Debe crearse en la raíz del proyecto con el siguiente contenido:
+
+```ini
+NODE_ENV=dev
+MONGO_URI=mongodb://develop:develop@localhost:27017/global-think-db_dev?authSource=admin
+PORT=3000
+JWT_SECRET="Inserte su frase favorita de la ficcion"
+JWT_EXPIRATION=3600
 ```
 
-## Run tests
+### 2. Archivo `.env.test` (Testing)
 
-```bash
-# unit tests
-$ npm run test
+Este archivo es **crítico** para la ejecución de los tests E2E.
+Debe contener la configuración apuntando a la base de datos de test (puerto 27018):
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```ini
+NODE_ENV=test
+MONGO_URI=mongodb://tester:tester@127.0.0.1:27018/fortune_test?authSource=admin
+PORT=3001
+JWT_SECRET="Inserte su frase favorita de la ficcion"
+JWT_EXPIRATION=3600
 ```
 
-## Deployment
+### 3. Archivo `.env_template`
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Plantilla de referencia para nuevos desarrolladores. Copiar este archivo a `.env` y ajustar valores si es necesario.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+```ini
+NODE_ENV=dev
+MONGO_URI=mongodb://develop:develop@localhost:27017/global-think-db_dev?authSource=admin
+PORT=3000
+JWT_SECRET="Inserte su frase favorita de la ficcion"
+JWT_EXPIRATION=3600
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 💻 Desarrollo Local
 
-Check out a few resources that may come in handy when working with NestJS:
+### Prerrequisitos
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- Node.js (v18 o superior)
+- Docker y Docker Compose
 
-## Support
+### Pasos para iniciar
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+1.  **Instalar dependencias:**
 
-## Stay in touch
+    ```bash
+    npm install
+    ```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+2.  **Levantar la Base de Datos de Desarrollo:**
+    Utilizamos un archivo docker-compose específico para la base de datos local.
 
-## License
+    ```bash
+    docker compose -f docker-compose.db.yml up -d
+    ```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+    Esto levantará MongoDB en el puerto `27017` y Mongo Express en el puerto `8081`.
+
+3.  **Iniciar la Aplicación:**
+    ```bash
+    npm run start
+    ```
+    La API estará disponible en `http://localhost:3000`.
+    La documentación Swagger estará en `http://localhost:3000/api/docs`.
+
+---
+
+## 🧪 Ejecución de Tests
+
+### Tests Unitarios
+
+Ejecutan pruebas aisladas de los servicios y lógica de negocio.
+
+```bash
+npm run test
+```
+
+### Tests E2E (End-to-End)
+
+Estos tests levantan una instancia de la aplicación y prueban los endpoints reales contra una base de datos de prueba.
+
+1.  **Levantar Base de Datos de Test:**
+    Es importante tener una instancia limpia de Mongo para los tests.
+
+    ```bash
+    docker compose -f docker-compose.test.yml up -d
+    ```
+
+2.  **Ejecutar los tests:**
+    ```bash
+    npm run test:e2e
+    ```
+
+---
+
+## 🚀 Despliegue en Producción
+
+Para desplegar la aplicación completa (API + Base de Datos) contenerizada para un entorno de producción:
+
+```bash
+docker compose up --build -d
+```
+
+Esto construirá la imagen de la aplicación basada en el `Dockerfile` optimizado y levantará todos los servicios definidos en `docker-compose.yml`.
+
+### Endpoints Principales
+
+- `POST /auth/register`: Registro de nuevos usuarios (Crea Usuario y Perfil).
+- `POST /auth/login`: Inicio de sesión (Devuelve JWT).
+- `GET /users`: Búsqueda paginada de usuarios (Requiere Auth).
+- `GET /users/:id`: Obtener detalle de usuario y perfil (Requiere Auth).
+- `PUT /users/:id`: Editar datos del perfil (Requiere Auth).

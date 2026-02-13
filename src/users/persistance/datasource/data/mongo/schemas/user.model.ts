@@ -8,17 +8,8 @@ export class UserModel {
     @Prop({ type: String })
     public _id: string;
 
-    @Prop({ required: true, maxlength: 100 })
-    public fullName: string;
-
-    @Prop({ required: true, maxlength: 200 })
-    public shortDescription: string;
-
     @Prop({ required: true, unique: true, maxlength: 100 })
     public email: string;
-
-    @Prop({ maxlength: 50 })
-    public phoneNumber?: string;
 
     @Prop({ required: true, maxlength: 255 })
     public passwordHash: string;

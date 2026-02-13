@@ -1,4 +1,4 @@
-import { User } from 'src/commons';
+import { Profile, User } from 'src/commons';
 import { GetByIdRes } from '../../response/get-by-id.response.dto';
 import { GetByIdReq } from '../../request/get-by-id.request.dto';
 
@@ -10,13 +10,14 @@ export class GetByIdMapper {
         });
     }
 
-    public toResponse(user: User): GetByIdRes {
+    public toResponse(user: User, profile: Profile): GetByIdRes {
         return new GetByIdRes({
             id: user.id,
-            fullName: user.fullName,
-            shortDescription: user.shortDescription,
+            fullName: profile.fullName,
+            shortDescription: profile.shortDescription,
             email: user.email,
-            phoneNumber: user.phoneNumber,
+            phoneNumber: profile.phoneNumber,
+            address: profile.address,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
         });

@@ -92,6 +92,10 @@ export class UserController {
         type: EditRes,
     })
     @ApiResponse({ status: 400, description: 'Datos de entrada inválidos.' })
+    @ApiResponse({
+        status: 409,
+        description: 'El correo electrónico ya está registrado.',
+    })
     @ApiResponse({ status: 401, description: 'No autorizado.' })
     @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
     public async edit(

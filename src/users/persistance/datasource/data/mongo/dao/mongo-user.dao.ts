@@ -14,10 +14,14 @@ export class MongoUserDao {
     constructor(
         @InjectModel(UserModel.name)
         private readonly mongoRepository: Model<UserModel>,
-    ) {}
+    ) { }
 
     public async findById(id: string): Promise<UserModel | null> {
         return await this.mongoRepository.findById(id).exec();
+    }
+
+    public async findByIds(ids: string[]): Promise<UserModel[]> {
+        return await this.mongoRepository.find({ _id: { $in: ids } }).exec();
     }
 
     public async findByEmail(email: string): Promise<UserModel | null> {
@@ -28,35 +32,6 @@ export class MongoUserDao {
         const createdUser = new this.mongoRepository(userModel);
 
         return await createdUser.save();
-    }
-
-    public async findAll(
-        size: number,
-        page: number,
-        name?: string,
-    ): Promise<Page<UserModel>> {
-        const skip: number = (page - 1) * size;
-
-        const sortConfig: any = name ? { fullName: 1 } : { createdAt: -1 };
-        const filter: Record<string, any> = {};
-
-        if (name) {
-            filter.fullName = { $regex: name, $options: 'i' };
-        }
-
-        const [models, total] = await Promise.all([
-            this.mongoRepository
-                .find(filter)
-                .sort(sortConfig)
-                .skip(skip)
-                .limit(size)
-                .exec(),
-            this.mongoRepository.countDocuments(filter).exec(),
-        ]);
-
-        const modelsPage: Page<UserModel> = new Page(models, total, page, size);
-
-        return modelsPage;
     }
 
     public async update(
