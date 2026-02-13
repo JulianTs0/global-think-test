@@ -1,4 +1,4 @@
-import { User } from 'src/commons';
+import { Profile, User } from 'src/commons';
 import { EditRes } from '../../response/edit.response.dto';
 import { EditReq } from '../../request/edit.request.dto';
 import { EditBody } from '../../request/edit.body.dto';
@@ -13,13 +13,14 @@ export class EditMapper {
         return request;
     }
 
-    public toResponse(user: User): EditRes {
+    public toResponse(user: User, profile: Profile): EditRes {
         return new EditRes({
             id: user.id,
-            fullName: user.fullName,
-            shortDescription: user.shortDescription,
+            fullName: profile.fullName,
+            shortDescription: profile.shortDescription,
             email: user.email,
-            phoneNumber: user.phoneNumber,
+            phoneNumber: profile.phoneNumber,
+            address: profile.address,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
         });

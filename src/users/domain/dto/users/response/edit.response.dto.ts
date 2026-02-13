@@ -9,6 +9,8 @@ export class EditRes {
 
     public readonly phoneNumber: string | null;
 
+    public readonly address: string | null;
+
     public readonly createdAt: Date;
 
     public readonly updatedAt: Date;

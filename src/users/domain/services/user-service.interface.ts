@@ -5,7 +5,7 @@ import { GetByIdReq } from '../dto/users/request/get-by-id.request.dto';
 import { GetByIdRes } from '../dto/users/response/get-by-id.response.dto';
 import { SearchUsersReq } from '../dto/users/request/search-users.request.dto';
 import { SearchUsersRes } from '../dto/users/response/search-users.response.dto';
-import { User } from 'src/commons';
+import { PageContent, User, Profile } from 'src/commons';
 
 /*
  * Interfaz del servicio de usuarios, este contrato permite obtener por id,
@@ -18,7 +18,8 @@ export abstract class UserServiceI {
     abstract edit(request: EditReq): Promise<EditRes>;
     abstract searchUsers(request: SearchUsersReq): Promise<SearchUsersRes>;
 
-    abstract register(user: User): Promise<User>;
+    abstract register(user: User, profile: Profile): Promise<User>;
     abstract findByEmail(email: string): Promise<User | null>;
     abstract findById(id: string): Promise<User | null>;
+    abstract findProfileByUserId(userId: string): Promise<Profile | null>;
 }

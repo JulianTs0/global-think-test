@@ -1,7 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { UserRepositoryI } from '../repository/user-repository.interface';
-import { Errors, PageContent, ServiceException, User } from 'src/commons';
+import { ProfileRepositoryI } from '../repository/profile-repository.interface';
+import {
+    Errors,
+    PageContent,
+    ServiceException,
+    User,
+    Profile,
+} from 'src/commons';
 import { GetByIdReq } from '../dto/users/request/get-by-id.request.dto';
 import { DeleteReq } from '../dto/users/request/delete.request.dto';
 import { EditReq } from '../dto/users/request/edit.request.dto';
@@ -12,7 +19,8 @@ describe('UserService', () => {
     // Variables
 
     let service: UserService;
-    let repository: UserRepositoryI;
+    let userRepository: UserRepositoryI;
+    let profileRepository: ProfileRepositoryI;
 
     // Mock del UserRepository
 
@@ -22,16 +30,31 @@ describe('UserService', () => {
         save: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
+    };
+
+    const mockProfileRepository = {
+        findByUserId: jest.fn(),
+        save: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
         findAll: jest.fn(),
     };
 
     const mockUser = new User({
         id: 'uuid-123',
-        fullName: 'Julian Test',
-        shortDescription: 'Junior Developer',
         email: 'julian@test.com',
         passwordHash: 'hashed_password',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    });
+
+    const mockProfile = new Profile({
+        id: 'profile-123',
+        userId: 'uuid-123',
+        fullName: 'Julian Test',
+        shortDescription: 'Junior Developer',
         phoneNumber: '+541122334455',
+        address: 'Test Street 123',
         createdAt: new Date(),
         updatedAt: new Date(),
     });
@@ -48,11 +71,16 @@ describe('UserService', () => {
                     provide: UserRepositoryI,
                     useValue: mockUserRepository,
                 },
+                {
+                    provide: ProfileRepositoryI,
+                    useValue: mockProfileRepository,
+                },
             ],
         }).compile();
 
         service = module.get<UserService>(UserService);
-        repository = module.get<UserRepositoryI>(UserRepositoryI);
+        userRepository = module.get<UserRepositoryI>(UserRepositoryI);
+        profileRepository = module.get<ProfileRepositoryI>(ProfileRepositoryI);
 
         jest.clearAllMocks();
     });
@@ -65,6 +93,9 @@ describe('UserService', () => {
             (mockUserRepository.findById as jest.Mock).mockResolvedValue(
                 mockUser,
             );
+            (mockProfileRepository.findByUserId as jest.Mock).mockResolvedValue(
+                mockProfile,
+            );
 
             const request = new GetByIdReq({
                 id: 'uuid-123',
@@ -75,8 +106,11 @@ describe('UserService', () => {
 
             // Tests
             expect(result).toBeDefined();
-            expect(result.fullName).toEqual(mockUser.fullName);
-            expect(repository.findById).toHaveBeenCalledWith('uuid-123');
+            expect(result.fullName).toEqual(mockProfile.fullName);
+            expect(userRepository.findById).toHaveBeenCalledWith('uuid-123');
+            expect(profileRepository.findByUserId).toHaveBeenCalledWith(
+                'uuid-123',
+            );
         });
 
         it('Debe lanzar USER_NOT_FOUND si el usuario no existe', async () => {
@@ -130,8 +164,12 @@ describe('UserService', () => {
             (mockUserRepository.findById as jest.Mock).mockResolvedValue(
                 mockUser,
             );
+            (mockProfileRepository.findByUserId as jest.Mock).mockResolvedValue(
+                mockProfile,
+            );
             // Simula eliminacion exitosa
             (mockUserRepository.delete as jest.Mock).mockResolvedValue(null);
+            (mockProfileRepository.delete as jest.Mock).mockResolvedValue(null);
 
             const request = new DeleteReq({
                 id: 'uuid-123',
@@ -141,8 +179,12 @@ describe('UserService', () => {
             await service.delete(request);
 
             // Tests
-            expect(repository.findById).toHaveBeenCalledWith('uuid-123');
-            expect(repository.delete).toHaveBeenCalledWith(mockUser);
+            expect(userRepository.findById).toHaveBeenCalledWith('uuid-123');
+            expect(profileRepository.findByUserId).toHaveBeenCalledWith(
+                'uuid-123',
+            );
+            expect(profileRepository.delete).toHaveBeenCalledWith(mockProfile);
+            expect(userRepository.delete).toHaveBeenCalledWith(mockUser);
         });
 
         it('Debe lanzar UNAUTHORIZED si el usuario intenta borrar a otro', async () => {
@@ -226,16 +268,35 @@ describe('UserService', () => {
                 fullName: 'Julian Updated',
                 shortDescription: 'Updated Desc',
                 email: 'updated@test.com',
+                phoneNumber: '+5491122334466',
+                address: 'Updated Street 456',
             });
-            const updatedUser = new User({ ...mockUser, ...editBody });
+            const updatedUser = new User({
+                ...mockUser,
+                email: editBody.email,
+            });
+            const updatedProfile = new Profile({
+                ...mockProfile,
+                fullName: editBody.fullName,
+                shortDescription: editBody.shortDescription,
+                phoneNumber: editBody.phoneNumber,
+                address: editBody.address,
+            });
 
             // Encuentra al usuario original
             (mockUserRepository.findById as jest.Mock).mockResolvedValue(
                 mockUser,
             );
+            (mockProfileRepository.findByUserId as jest.Mock).mockResolvedValue(
+                mockProfile,
+            );
+
             // Simula actualizacion
             (mockUserRepository.update as jest.Mock).mockResolvedValue(
                 updatedUser,
+            );
+            (mockProfileRepository.update as jest.Mock).mockResolvedValue(
+                updatedProfile,
             );
 
             const request = new EditReq({
@@ -249,7 +310,9 @@ describe('UserService', () => {
             // Tests
             expect(result).toBeDefined();
             expect(result.fullName).toBe(editBody.fullName);
-            expect(repository.update).toHaveBeenCalled();
+            expect(result.address).toBe(editBody.address);
+            expect(userRepository.update).toHaveBeenCalled();
+            expect(profileRepository.update).toHaveBeenCalled();
         });
 
         it('Debe lanzar UNAUTHORIZED si el usuario intenta editar a otro', async () => {
@@ -290,15 +353,19 @@ describe('UserService', () => {
         });
 
         it('Debe retornar una lista paginada de usuarios', async () => {
-            const pageContent = new PageContent<User>({
-                content: [mockUser],
+            const pageContent = new PageContent<Profile>({
+                content: [mockProfile],
                 page: 1,
                 nextPage: null,
             });
 
-            // Retorna la pagina de usuarios
-            (mockUserRepository.findAll as jest.Mock).mockResolvedValue(
+            // Retorna la pagina de perfiles
+            (mockProfileRepository.findAll as jest.Mock).mockResolvedValue(
                 pageContent,
+            );
+            // Retorna el usuario asociado
+            (mockUserRepository.findById as jest.Mock).mockResolvedValue(
+                mockUser,
             );
 
             const request = new SearchUsersReq({
@@ -313,7 +380,7 @@ describe('UserService', () => {
             // Tests
             expect(result).toBeDefined();
             expect(result.users.length).toBe(1);
-            expect(result.users[0].fullName).toBe(mockUser.fullName);
+            expect(result.users[0].fullName).toBe(mockProfile.fullName);
         });
     });
 
@@ -323,12 +390,16 @@ describe('UserService', () => {
         it('Debe registrar un usuario', async () => {
             // Simula el guardado
             (mockUserRepository.save as jest.Mock).mockResolvedValue(mockUser);
+            (mockProfileRepository.save as jest.Mock).mockResolvedValue(
+                mockProfile,
+            );
 
-            const result = await service.register(mockUser);
+            const result = await service.register(mockUser, mockProfile);
 
             // Tests
             expect(result).toEqual(mockUser);
-            expect(repository.save).toHaveBeenCalledWith(mockUser);
+            expect(userRepository.save).toHaveBeenCalledWith(mockUser);
+            expect(profileRepository.save).toHaveBeenCalledWith(mockProfile);
         });
 
         it('Debe encontrar un usuario por email', async () => {
@@ -341,7 +412,7 @@ describe('UserService', () => {
 
             // Tests
             expect(result).toEqual(mockUser);
-            expect(repository.findByEmail).toHaveBeenCalledWith(
+            expect(userRepository.findByEmail).toHaveBeenCalledWith(
                 'test@test.com',
             );
         });
@@ -356,7 +427,22 @@ describe('UserService', () => {
 
             // Tests
             expect(result).toEqual(mockUser);
-            expect(repository.findById).toHaveBeenCalledWith('uuid-123');
+            expect(userRepository.findById).toHaveBeenCalledWith('uuid-123');
+        });
+
+        it('Debe encontrar un perfil por userId', async () => {
+            // Busca perfil por userId
+            (mockProfileRepository.findByUserId as jest.Mock).mockResolvedValue(
+                mockProfile,
+            );
+
+            const result = await service.findProfileByUserId('uuid-123');
+
+            // Tests
+            expect(result).toEqual(mockProfile);
+            expect(profileRepository.findByUserId).toHaveBeenCalledWith(
+                'uuid-123',
+            );
         });
     });
 });
