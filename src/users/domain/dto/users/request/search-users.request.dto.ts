@@ -7,6 +7,7 @@ import {
     IsString,
     IsPositive,
 } from 'class-validator';
+import { User } from 'src/commons';
 
 export class SearchUsersReq {
     @ApiProperty({
@@ -37,6 +38,8 @@ export class SearchUsersReq {
     @IsNotEmpty()
     @IsString()
     public fullName: string;
+
+    public authUser: User;
 
     constructor(init?: Partial<SearchUsersReq>) {
         Object.assign(this, init);

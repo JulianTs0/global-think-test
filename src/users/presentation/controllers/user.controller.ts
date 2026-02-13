@@ -49,8 +49,13 @@ export class UserController {
     })
     @ApiResponse({ status: 404, description: 'Usuario no encontrado.' })
     @ApiResponse({ status: 401, description: 'No autorizado.' })
-    public async getById(@Param() request: GetByIdReq): Promise<GetByIdRes> {
-        return await this.userService.getById(request);
+    public async getById(
+        @Param('id') id: string,
+        @AuthUser() user: User,
+    ): Promise<GetByIdRes> {
+        return await this.userService.getById(
+            UserMapper.getById().toRequest(id, user),
+        );
     }
 
     @UseGuards(AuthGuard)
@@ -68,8 +73,11 @@ export class UserController {
     @ApiResponse({ status: 401, description: 'No autorizado.' })
     public async findByName(
         @Query() request: SearchUsersReq,
+        @AuthUser() user: User,
     ): Promise<SearchUsersRes> {
-        return this.userService.searchUsers(request);
+        return this.userService.searchUsers(
+            UserMapper.searchUsers().toRequest(request, user),
+        );
     }
 
     @UseGuards(AuthGuard)

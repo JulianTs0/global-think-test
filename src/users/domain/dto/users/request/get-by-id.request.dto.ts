@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { User } from 'src/commons';
 
 export class GetByIdReq {
     @ApiProperty({
@@ -9,6 +10,8 @@ export class GetByIdReq {
     @IsNotEmpty()
     @IsString()
     public id: string;
+
+    public authUser: User;
 
     constructor(init?: Partial<GetByIdReq>) {
         Object.assign(this, init);

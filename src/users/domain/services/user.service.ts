@@ -21,6 +21,10 @@ export class UserService implements UserServiceI {
     constructor(private readonly userRepository: UserRepositoryI) {}
 
     public async getById(request: GetByIdReq): Promise<GetByIdRes> {
+        if (!request.authUser) {
+            throw new ServiceException(Errors.UNAUTHORIZED);
+        }
+
         const user: User | null = await this.userRepository.findById(
             request.id,
         );
@@ -33,6 +37,10 @@ export class UserService implements UserServiceI {
     }
 
     public async delete(request: DeleteReq): Promise<void> {
+        if (!request.authUser) {
+            throw new ServiceException(Errors.UNAUTHORIZED);
+        }
+
         const user: User | null = await this.userRepository.findById(
             request.id,
         );
@@ -49,6 +57,10 @@ export class UserService implements UserServiceI {
     }
 
     public async edit(request: EditReq): Promise<EditRes> {
+        if (!request.authUser) {
+            throw new ServiceException(Errors.UNAUTHORIZED);
+        }
+
         const user: User | null = await this.userRepository.findById(
             request.id,
         );
@@ -73,6 +85,10 @@ export class UserService implements UserServiceI {
     }
 
     public async searchUsers(request: SearchUsersReq): Promise<SearchUsersRes> {
+        if (!request.authUser) {
+            throw new ServiceException(Errors.UNAUTHORIZED);
+        }
+
         let userPage: PageContent<User> = await this.userRepository.findAll(
             request.size,
             request.page,
