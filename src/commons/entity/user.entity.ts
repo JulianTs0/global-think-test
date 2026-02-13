@@ -3,15 +3,9 @@
 export class User {
     public id: string;
 
-    public fullName: string;
-
-    public shortDescription: string | null;
-
     public email: string;
 
     public passwordHash: string;
-
-    public phoneNumber: string | null;
 
     public createdAt: Date;
 
@@ -26,13 +20,10 @@ export class User {
 
         const user = new User();
         user.id = object.id;
-        user.fullName = object.fullName;
-        user.shortDescription = object.shortDescription;
         user.email = object.email;
         user.passwordHash = object.passwordHash;
         user.createdAt = object.createdAt;
         user.updatedAt = object.updateAt;
-        user.phoneNumber = object.phoneNumber;
 
         return user;
     }
