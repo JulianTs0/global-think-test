@@ -1,10 +1,10 @@
 # Global Think Test - Backend
 
-Este proyecto es una API REST construida con **NestJS**, siguiendo los conocimientos mis arquitectura separando el dominio de la infraestructura y la persistencia.
+Este proyecto es una API REST construida con **NestJS**, siguiendo mis conocimientos de arquitectura separando el dominio de la infraestructura y la persistencia.
 
 ## 🏗 Estructura del Proyecto
 
-El proyecto sigue una estructura modular simplificada
+El proyecto sigue una estructura monolotica modular simplificada
 
 ```
 src/
@@ -38,7 +38,7 @@ El proyecto requiere la configuración de archivos `.env` para su correcto funci
 
 ### 1. Archivo `.env` (Desarrollo)
 
-Este archivo se utiliza para el entorno de desarrollo local (`start:dev`).
+Este archivo se utiliza para el entorno de desarrollo local (`start`).
 Debe crearse en la raíz del proyecto con el siguiente contenido:
 
 ```ini
@@ -62,9 +62,9 @@ JWT_SECRET="Inserte su frase favorita de la ficcion"
 JWT_EXPIRATION=3600
 ```
 
-### 3. Archivo `.env_template`
+### 3. Archivo `.env.template`
 
-Plantilla de referencia para nuevos desarrolladores. Copiar este archivo a `.env` y ajustar valores si es necesario.
+Plantilla de referencia. Copiar este archivo a `.env` y `.env.test` y ajuste los valores.
 
 ```ini
 NODE_ENV=dev
