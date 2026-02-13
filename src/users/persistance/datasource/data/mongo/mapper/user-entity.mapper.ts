@@ -9,13 +9,10 @@ export class UserEntityMapper {
 
         const entity: User = new User();
         entity.id = userModel._id.toString();
-        entity.fullName = userModel.fullName;
-        entity.shortDescription = userModel.shortDescription;
         entity.email = userModel.email;
         entity.passwordHash = userModel.passwordHash;
         entity.createdAt = userModel.createdAt;
         entity.updatedAt = userModel.updatedAt;
-        entity.phoneNumber = userModel.phoneNumber ?? null;
 
         return entity;
     }
@@ -26,10 +23,7 @@ export class UserEntityMapper {
         const model: UserModel = new UserModel();
 
         model._id = user.id;
-        model.fullName = user.fullName;
-        model.shortDescription = user.shortDescription ?? '';
         model.email = user.email;
-        model.phoneNumber = user.phoneNumber || undefined;
         model.passwordHash = user.passwordHash;
         model.createdAt = user.createdAt;
         model.updatedAt = user.updatedAt;

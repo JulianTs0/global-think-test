@@ -14,7 +14,7 @@ export class MongoUserDao {
     constructor(
         @InjectModel(UserModel.name)
         private readonly mongoRepository: Model<UserModel>,
-    ) {}
+    ) { }
 
     public async findById(id: string): Promise<UserModel | null> {
         return await this.mongoRepository.findById(id).exec();
@@ -30,19 +30,11 @@ export class MongoUserDao {
         return await createdUser.save();
     }
 
-    public async findAll(
-        size: number,
-        page: number,
-        name?: string,
-    ): Promise<Page<UserModel>> {
+    public async findAll(size: number, page: number): Promise<Page<UserModel>> {
         const skip: number = (page - 1) * size;
 
-        const sortConfig: any = name ? { fullName: 1 } : { createdAt: -1 };
+        const sortConfig: any = { createdAt: -1 };
         const filter: Record<string, any> = {};
-
-        if (name) {
-            filter.fullName = { $regex: name, $options: 'i' };
-        }
 
         const [models, total] = await Promise.all([
             this.mongoRepository
