@@ -56,4 +56,8 @@ export class RegisterReq {
     @IsString()
     @Matches(RegexValidators.PHONE)
     readonly phoneNumber: string | null;
+
+    constructor(init?: Partial<RegisterReq>) {
+        Object.assign(this, init);
+    }
 }
