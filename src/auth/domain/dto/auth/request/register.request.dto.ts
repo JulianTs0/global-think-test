@@ -58,7 +58,7 @@ export class RegisterReq {
     readonly phoneNumber: string | null;
 
     @ApiProperty({
-        description: 'Dirección (email simple)',
+        description: 'Dirección',
         example: 'Calle Falsa 123',
         required: false,
     })
