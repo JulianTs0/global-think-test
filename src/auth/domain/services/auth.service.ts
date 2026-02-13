@@ -4,6 +4,7 @@ import {
     ServiceException,
     Token,
     User,
+    Profile,
 } from 'src/commons';
 import { AuthServiceI } from './auth-service.interface';
 import { Injectable } from '@nestjs/common';
@@ -28,12 +29,17 @@ export class AuthService implements AuthServiceI {
     constructor(
         private readonly authHelper: AuthHelper,
         private readonly userSevice: UserServiceI,
-    ) {}
+    ) { }
 
     public async auth(request: AuthReq): Promise<AuthRes> {
         const user: User = await this.validateToken(request.authorization);
 
-        return AuthMapper.auth().toResponse(user);
+        const profile: Profile | null =
+            await this.userSevice.findProfileByUserId(user.id);
+
+        if (!profile) throw new ServiceException(Errors.USER_NOT_FOUND);
+
+        return AuthMapper.auth().toResponse(user, profile);
     }
 
     public async login(request: LoginReq): Promise<LoginRes> {
@@ -70,13 +76,18 @@ export class AuthService implements AuthServiceI {
 
         const user: User = new User();
         user.id = generatedId;
-        user.fullName = request.fullName;
-        user.shortDescription = request.shortDescription;
         user.email = request.email;
         user.passwordHash = paswordHash;
-        user.phoneNumber = request.phoneNumber ?? null;
 
-        const saved: User = await this.userSevice.register(user);
+        const profile: Profile = new Profile();
+        profile.id = IdGenerator.generateUUID();
+        profile.userId = generatedId;
+        profile.fullName = request.fullName;
+        profile.shortDescription = request.shortDescription;
+        profile.phoneNumber = request.phoneNumber ?? null;
+        profile.address = request.address ?? null;
+
+        const saved: User = await this.userSevice.register(user, profile);
 
         return AuthMapper.register().toResponse(saved);
     }
