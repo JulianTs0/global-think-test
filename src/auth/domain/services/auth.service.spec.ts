@@ -4,7 +4,8 @@ import { UserServiceI } from 'src/users/domain';
 import { AuthHelper } from 'src/auth/config';
 import { LoginReq } from '../dto/auth/request/login.request.dto';
 import { RegisterReq } from '../dto/auth/request/register.request.dto';
-import { Errors, ServiceException, User, Token } from 'src/commons';
+import { Errors, ServiceException, User, Token, Profile } from 'src/commons';
+import { AuthReq } from '../dto/auth/request/auth.request.dto';
 
 describe('AuthService', () => {
     // Injecciones mock
@@ -17,6 +18,7 @@ describe('AuthService', () => {
         findByEmail: jest.fn(),
         register: jest.fn(),
         findById: jest.fn(),
+        findProfileByUserId: jest.fn(),
     };
 
     const mockAuthHelper = {
@@ -142,6 +144,7 @@ describe('AuthService', () => {
                 password: 'Password123!',
                 fullName: 'Nuevo Usuario',
                 shortDescription: 'Desc',
+                address: 'Calle Falsa 123',
             });
 
             const savedUser = new User();
@@ -170,6 +173,10 @@ describe('AuthService', () => {
                 expect.objectContaining({
                     passwordHash: 'hashed-pass',
                     email: 'nuevo@test.com',
+                }),
+                expect.objectContaining({
+                    fullName: 'Nuevo Usuario',
+                    address: 'Calle Falsa 123',
                 }),
             );
         });
@@ -262,6 +269,58 @@ describe('AuthService', () => {
 
             // Comprobamos
             await expect(result).rejects.toThrow(ServiceException);
+        });
+    });
+
+    describe('auth', () => {
+        it('Debe retornar usuario y perfil si el token es válido', async () => {
+            // Preparacion
+            const rawToken = 'Bearer valid.token.jwt';
+            const request = new AuthReq({ authorization: rawToken });
+            const mockUser = new User({ id: 'user-123' });
+            const mockProfile = new Profile({ fullName: 'Test User' });
+
+            // Mock validateToken internals
+            (mockAuthHelper.parseToken as jest.Mock).mockReturnValue(
+                'valid.token.jwt',
+            );
+            (mockAuthHelper.getSubject as jest.Mock).mockResolvedValue(
+                'user-123',
+            );
+            (mockUserService.findById as jest.Mock).mockResolvedValue(mockUser);
+
+            // Mock profile lookup
+            (
+                mockUserService.findProfileByUserId as jest.Mock
+            ).mockResolvedValue(mockProfile);
+
+            const result = await service.auth(request);
+
+            expect(result).toBeDefined();
+            expect(result.fullName).toBe('Test User');
+        });
+
+        it('Debe lanzar USER_NOT_FOUND si el usuario no tiene perfil', async () => {
+            const rawToken = 'Bearer valid.token.jwt';
+            const request = new AuthReq({ authorization: rawToken });
+            const mockUser = new User({ id: 'user-123' });
+
+            // Mock validateToken internals
+            (mockAuthHelper.parseToken as jest.Mock).mockReturnValue(
+                'valid.token.jwt',
+            );
+            (mockAuthHelper.getSubject as jest.Mock).mockResolvedValue(
+                'user-123',
+            );
+            (mockUserService.findById as jest.Mock).mockResolvedValue(mockUser);
+
+            (
+                mockUserService.findProfileByUserId as jest.Mock
+            ).mockResolvedValue(null);
+
+            await expect(service.auth(request)).rejects.toThrow(
+                Errors.USER_NOT_FOUND.message,
+            );
         });
     });
 });
