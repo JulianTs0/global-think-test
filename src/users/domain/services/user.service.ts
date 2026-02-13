@@ -23,7 +23,7 @@ export class UserService implements UserServiceI {
     constructor(
         private readonly userRepository: UserRepositoryI,
         private readonly profileRepository: ProfileRepositoryI,
-    ) { }
+    ) {}
 
     public async getById(request: GetByIdReq): Promise<GetByIdRes> {
         if (!request.authUser) {
@@ -91,6 +91,15 @@ export class UserService implements UserServiceI {
             throw new ServiceException(Errors.USER_NOT_FOUND);
         }
 
+        if (request.body.email && request.body.email !== user.email) {
+            const userWithEmail = await this.userRepository.findByEmail(
+                request.body.email,
+            );
+            if (userWithEmail) {
+                throw new ServiceException(Errors.EMAIL_ALREADY_EXISTS);
+            }
+        }
+
         profile.fullName = request.body.fullName;
         profile.shortDescription = request.body.shortDescription;
         profile.phoneNumber = request.body.phoneNumber;
@@ -124,11 +133,7 @@ export class UserService implements UserServiceI {
 
         const userIds = profilePage.content.map((p) => p.userId);
 
-        const users: User[] = (
-            await Promise.all(
-                userIds.map((id) => this.userRepository.findById(id)),
-            )
-        ).filter((u): u is User => u !== null);
+        const users: User[] = await this.userRepository.findByIds(userIds);
 
         return UserMapper.searchUsers().toResponse(profilePage, users);
     }

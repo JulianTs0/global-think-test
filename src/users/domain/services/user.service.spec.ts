@@ -30,6 +30,7 @@ describe('UserService', () => {
         save: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
+        findByIds: jest.fn(),
     };
 
     const mockProfileRepository = {
@@ -335,6 +336,40 @@ describe('UserService', () => {
                 Errors.UNAUTHORIZED.message,
             );
         });
+
+        it('Debe lanzar EMAIL_ALREADY_EXISTS si el email ya esta en uso', async () => {
+            const editBody = new EditBody({
+                email: 'existente@test.com',
+                fullName: 'New Name',
+            });
+
+            // Encuentra al usuario original
+            (mockUserRepository.findById as jest.Mock).mockResolvedValue(
+                mockUser,
+            );
+            (mockProfileRepository.findByUserId as jest.Mock).mockResolvedValue(
+                mockProfile,
+            );
+
+            // Simula que ya existe otro usuario con ese email
+            (mockUserRepository.findByEmail as jest.Mock).mockResolvedValue(
+                new User({ id: 'otro-user', email: 'existente@test.com' }),
+            );
+
+            const request = new EditReq({
+                id: 'uuid-123',
+                authUser: mockUser,
+                body: editBody,
+            });
+
+            // Assert
+            await expect(service.edit(request)).rejects.toThrow(
+                ServiceException,
+            );
+            await expect(service.edit(request)).rejects.toThrow(
+                Errors.EMAIL_ALREADY_EXISTS.message,
+            );
+        });
     });
 
     // Test del metodo searchUsers
@@ -363,10 +398,10 @@ describe('UserService', () => {
             (mockProfileRepository.findAll as jest.Mock).mockResolvedValue(
                 pageContent,
             );
-            // Retorna el usuario asociado
-            (mockUserRepository.findById as jest.Mock).mockResolvedValue(
+            // Retorna lista de usuarios
+            (mockUserRepository.findByIds as jest.Mock).mockResolvedValue([
                 mockUser,
-            );
+            ]);
 
             const request = new SearchUsersReq({
                 page: 1,
@@ -381,6 +416,9 @@ describe('UserService', () => {
             expect(result).toBeDefined();
             expect(result.users.length).toBe(1);
             expect(result.users[0].fullName).toBe(mockProfile.fullName);
+            expect(userRepository.findByIds).toHaveBeenCalledWith([
+                mockProfile.userId,
+            ]);
         });
     });
 

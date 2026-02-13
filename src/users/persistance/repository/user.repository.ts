@@ -20,6 +20,11 @@ export class UserRepository implements UserRepositoryI {
         return UserEntityMapper.toDomain(model);
     }
 
+    public async findByIds(ids: string[]): Promise<User[]> {
+        const models: UserModel[] = await this.dao.findByIds(ids);
+        return UserEntityMapper.toDomainList(models);
+    }
+
     public async findByEmail(email: string): Promise<User | null> {
         const model: UserModel | null = await this.dao.findByEmail(email);
         return UserEntityMapper.toDomain(model);
@@ -36,11 +41,7 @@ export class UserRepository implements UserRepositoryI {
         page: number,
         name?: string,
     ): Promise<PageContent<User>> {
-        const models: Page<UserModel> = await this.dao.findAll(
-            size,
-            page,
-            name,
-        );
+        const models: Page<UserModel> = await this.dao.findAll(size, page);
 
         return new PageContent<User>({
             content: UserEntityMapper.toDomainList(models.content),

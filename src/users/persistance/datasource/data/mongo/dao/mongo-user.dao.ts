@@ -14,10 +14,14 @@ export class MongoUserDao {
     constructor(
         @InjectModel(UserModel.name)
         private readonly mongoRepository: Model<UserModel>,
-    ) { }
+    ) {}
 
     public async findById(id: string): Promise<UserModel | null> {
         return await this.mongoRepository.findById(id).exec();
+    }
+
+    public async findByIds(ids: string[]): Promise<UserModel[]> {
+        return await this.mongoRepository.find({ _id: { $in: ids } }).exec();
     }
 
     public async findByEmail(email: string): Promise<UserModel | null> {
