@@ -57,6 +57,16 @@ export class RegisterReq {
     @Matches(RegexValidators.PHONE)
     readonly phoneNumber: string | null;
 
+    @ApiProperty({
+        description: 'Dirección (email simple)',
+        example: 'Calle Falsa 123',
+        required: false,
+    })
+    @IsOptional()
+    @IsNotEmpty()
+    @IsString()
+    readonly address: string | null;
+
     constructor(init?: Partial<RegisterReq>) {
         Object.assign(this, init);
     }
