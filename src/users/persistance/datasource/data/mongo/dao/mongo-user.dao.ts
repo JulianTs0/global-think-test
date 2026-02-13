@@ -14,7 +14,7 @@ export class MongoUserDao {
     constructor(
         @InjectModel(UserModel.name)
         private readonly mongoRepository: Model<UserModel>,
-    ) {}
+    ) { }
 
     public async findById(id: string): Promise<UserModel | null> {
         return await this.mongoRepository.findById(id).exec();
@@ -32,27 +32,6 @@ export class MongoUserDao {
         const createdUser = new this.mongoRepository(userModel);
 
         return await createdUser.save();
-    }
-
-    public async findAll(size: number, page: number): Promise<Page<UserModel>> {
-        const skip: number = (page - 1) * size;
-
-        const sortConfig: any = { createdAt: -1 };
-        const filter: Record<string, any> = {};
-
-        const [models, total] = await Promise.all([
-            this.mongoRepository
-                .find(filter)
-                .sort(sortConfig)
-                .skip(skip)
-                .limit(size)
-                .exec(),
-            this.mongoRepository.countDocuments(filter).exec(),
-        ]);
-
-        const modelsPage: Page<UserModel> = new Page(models, total, page, size);
-
-        return modelsPage;
     }
 
     public async update(
